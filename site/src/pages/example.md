@@ -2,7 +2,7 @@
 title: Example Page 
 subtitle: ""
 metaDescription: This page is all about me
-date: 2022-10-19 T00:00:00.000Z
+date: 2022-10-19T00:00:00.000Z
 permalink: /example/index.html
 eleventyNavigation:
   key: Example
