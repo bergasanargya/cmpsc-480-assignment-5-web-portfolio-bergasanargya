@@ -1,7 +1,7 @@
 node_modules
 dist
-.env
-deploy.js
-yarn.lock
-package-lock.json
-.cache
+build
+_site/css/*.css
+_site/css/*.css.map
+_site/js/script.js
+.vscode/

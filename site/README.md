@@ -1,108 +1,133 @@
-# Eleventy Soft UI Design
+# Seven
 
-[Eleventy Soft UI](https://appseed.us/product/eleventy-soft-ui) is an Eleventy adaptation of **Soft UI Design System** (a user-friendly and beautiful design system based on Bootstrap 5), including a Blog system that uses Prismic CMS for content management. **Soft UI Design System** is built with over 70 frontend individual elements, like buttons, inputs, navbars, nav tabs, cards, or alerts, giving you the freedom of choosing and combining. All components can take variations in color, which you can easily modify using SASS files and classes.
+This project is a template for building sites using the [Eleventy](https://www.11ty.io/) static site generator. You can see a demo of the site at [7ty.tech](https://7ty.tech). It features a Vue.js powered simple search based on what's in `_site/posts` and `_site/courses` as well as pagination, animations and much more.
 
-> Features:
+## Quickstart
 
-- UI: [Soft UI Design System](https://bit.ly/3v6JYIe) crafted by **Creative-Tim**
-- **Prismic CMS** for blog posts
-- CSS Pipeline (Sass, CleanCSS)
-- JS Bundling (Webpack)
-- SVG Icon Sprite Generation
-- Critical CSS, HTML Minification
+- `Clone` or `download` the repo
+- Run `npm install` to install dependencies
+- Run `npm start` to start the development server.
+- Point your browser to `localhost:8080`
+- Edit posts in the `_site/posts` or `_site/courses` folder.
+- Run `npm run build` to build the project.
 
-<br />
+## Styles
 
-> Links
+All the files that require pre-processing are inside the `_templates/_process` folder.
 
-- [Eleventy Soft UI](https://appseed.us/product/eleventy-soft-ui) - product page
-- [Eleventy Soft UI](https://eleventy-soft-ui.appseed-srv1.com/) - LIVE Demo
+The main sass doument is the `style.scss` document, which has a number of imports including fonts. This also imports bootstrap, but notice several unused bootstrap components have been commented out to make the file size smaller. Feel free to uncomment these if you're going to be using them in your layout.
 
-<br />
+`_custom.scss` lets you override sass variables so you can customize the way different components work. This new version of seven uses a dark mode color scheme by default, but it's fairly easy to update using this custom file.
 
-![Eleventy Soft UI Design - Open-source SSG starter provided by AppSeed in 11ty on top of Soft UI Design.](https://user-images.githubusercontent.com/51070104/128602712-4b38f18d-2154-4899-a796-aec0f7435329.png)
+All of the overrides for specific styles are in the `_overrides.scss` file, so look there to change the way specific classes work.
 
-<br />
+## Scripts
 
-## Compile from Sources
+The `js` folder has a single script.js file. There are two parts, a jquery section that is designed to change the way Bootstrap's jquery components work and a vue.js instance that powers the search.
 
-> **Step #1** - Clone this repository
+In this version, I'm using script tags to the CDNs for things like the Bootstrap Javascript, the fonts, etc. I wasn't changing any of the bootstrap or other library javascript so I think this will be much more performant since most people will have the CDNs pre-loaded in their browsers.
 
-```bash
-$ git clone https://github.com/app-generator/eleventy-soft-ui-design.git
-$ cd eleventy-soft-ui-design 
+## Site
+
+The main 11.ty site files are all in the `_site` folder.
+
+The `_site` folder is pretty much like your website root folder. These files will convert to pages for the most part. It's useful to think of it as having the structure your site folder will have (notice there are index, css, image files like on your site), but don't be fooled, most of the files in this folder need to be processed.
+
+The `_templates` folder has a series of templates used to build your site, no content here. Most of these are self explanatory and you'll see these being called in your pages. There is a `_layouts` folder that has the main layouts. You should probably look at the 11.ty documentation to learn how these work. Of course, I've added the `_templates` folder in here because it helps with the reloading of elements during development.
+
+There is a special getTagsList.js folder which sets up your tags, It's used by the main configuration file called `.eleventy.js`. I didn't know where else to put it so it seemed like a good idea to me.
+
+## `_data` folder
+
+This has the `metadata.json` file, which includes variables that the site uses to build itself. Things like name, bio, the title of the site. For example, you can access the title of the site using `{{metadata.title}}` in your template.
+
+There is also a `myProject.js` file. The purpose of this file is to expose the value of the environment variable's setting (development or production) so you can use it in templates like this:
+
+```html
+{% if myProject.environment == "development" %}
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+{% else %}
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js"></script>
+{% endif %}
 ```
 
-<br />
+I use this to load the development version of vue.js during development and the smaller distribution version when building the project.
 
-> **Step #2** - Install modules via NPM or Yarn
+## Configuration
 
-```bash
-$ npm i
-// OR
-$ yarn
+The main configuration file is called `.eleventy.js` and is in the root folder. The important bits are the special collections based on existing folders.
+
+```js
+// only content in the `posts/` directory
+eleventyConfig.addCollection("courses", function(collection) {
+  return collection.getFilteredByGlob("./_site/courses/*.md").reverse();
+});
+
+eleventyConfig.addCollection("searchable", function(collection) {
+  return collection
+    .getFilteredByGlob(["./_site/courses/*.md", "./_site/posts/*.md"])
+    .reverse();
+});
 ```
 
-<br />
+These commands set up collections, which are used to build the site. The first example corresponds to folders in the `_site` folder that are the main sections of the site. The commands here will look for a certain folder in the `_sites` folder and build a collection out of everything in there.
 
-> **Step #3** - Configure [Prismic](http://prismic.io/) API Node
-
-Rename `.env.sample` to `.env` and specify the `PRISMIC_REPOSITORY_NAME`. In case you are not familiar with `Prismic`, feel free to use the `DEMO API` provided by AppSeed: `https://eleventy-soft-ui-design.prismic.io/api/v2`
-
-```env
-PRISMIC_REPOSITORY_NAME=YOUR_PRISMIC_API_URL
-```
-
-<br />
-
-> **Step #4** - Start project in development mode
-
-```bash
-$ yarn start
-```
-
-Once the project is compiled and the content is pulled from `Prismic`, the project can be visited in the browser: `http://localhost:8080`.
-
-<br />
-
-## Codebase structure
+The last one adds folders to a new collection which our `Vue.js` search component uses. If you add a new collection, make sure you add it here. Check the 11.ty documentation to learn how to use the `getFilteredByGlob` command.
 
 ```
-eleventy-soft-ui-design
-    ├── src/
-    │ ├── assets/
-    │ │ ├── css/
-    │ │ ├── favicon/
-    │ │ ├── fonts/
-    │ │ ├── img/
-    │ │ ├── js/
-    │ │ ├── scripts/modules/app.js
-    │ │ └── scss/app.scss
-    │ ├── data/
-    │ │ ├── app.json
-    │ │ ├── meta.json
-    │ │ └── prismicData.js
-    │ ├── includes/
-    │ ├── layouts/
-    │ ├── pages/
-    │ ├── sections/
-    │ ├── 404.njk
-    │ ├── feed.njk
-    │ ├── index.njk
-    │ ├── blog.njk
-    │ ├── presentation.njk
-    │ ├── robots.njk
-    │ └── sitemap.njk
-		├── utils/
-    ├── .eleventy.js
-    ├── .env.sample
-    ├── .gitignore
-    ├── .prettierrc
-    ├──  netlify.toml
-    └──  package.js
+  eleventyConfig.addPassthroughCopy("./_site/images");
 ```
 
-<br />
+This code is used to copy whatever is in these folders, if you happen to move the locations of images, then update this.
 
----
-[Eleventy Soft UI](https://appseed.us/product/eleventy-soft-ui) - provided by AppSeed [App Generator](https://appseed.us)
+I hate messy root folders, so I've reconfigured where eleventy places files.
+
+```js
+dir: {
+  input: "_site",
+  includes: "_templates",
+  data: "_data",
+  output: "dist"
+}
+```
+
+If you move stuff around, remember to update these. Also, the build processes refer to some of these locations, so if you move things, remember to update these.
+
+```js
+    "start": "npm-run-all --parallel dev:*",
+    "dev:del": "rimraf dist",
+    "dev:eleventy": "ELEVENTY_ENV=development eleventy --serve --quiet",
+    "dev:webpack": "webpack --config webpack.dev.js",
+
+    "build": "run-s prod:*",
+    "now-build": "run-s prod:*",
+    "prod:del": "rimraf build",
+    "prod:webpack": "webpack -p --config webpack.prod.js",
+    "prod:serve": "ELEVENTY_ENV=production eleventy --output=./build"
+```
+
+## Building
+
+I have two main processes that can run. There is a shared configuration file called `webpack.common.js` and two other configuration for development or production environments.
+
+```sh
+npm start
+```
+
+This cleans up the dist or build folders, then runs eleventy and webpack. Webpack takes care of processing the sass and javascript.
+
+```sh
+npm run build
+```
+
+This cleans up/creates a new build folder, then runs the eleventy and webpack. Webpack takes care of processing the sass and javascript. The webpack processes are in `webpack.prod.js`.
+
+There is an optional now-build process here as well that runs if you are using `zeit.co`
+
+## Other Setup Files
+
+- `now.json` - Configuration for now, if you use [zeit.co](https://zeit.co).
+
+- `.nowignore` - Thing that `now` ignores
+
+- `.babelrc` - configures how webpack processes javascript to make it more or less compatible with older browser versions.

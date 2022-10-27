@@ -1,185 +1,102 @@
-const pluginRss = require('@11ty/eleventy-plugin-rss')
-const pluginNavigation = require('@11ty/eleventy-navigation')
-const markdownIt = require('markdown-it')
-const PrismicDOM = require('prismic-dom')
 const { DateTime } = require('luxon')
-const readingTime = require('eleventy-plugin-reading-time')
-const Image = require('@11ty/eleventy-img')
-const sharp = require('sharp')
+const pluginRss = require('@11ty/eleventy-plugin-rss')
+const pluginSyntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight')
+const pluginTOC = require('eleventy-plugin-nesting-toc')
+const eleventyNavigationPlugin = require('@11ty/eleventy-navigation')
 
-const filters = require('./utils/filters.js')
-const transforms = require('./utils/transforms.js')
-const shortcodes = require('./utils/shortcodes.js')
-const iconsprite = require('./utils/iconsprite.js')
+module.exports = function(eleventyConfig) {
+  eleventyConfig.addPlugin(pluginRss)
+  eleventyConfig.addPlugin(pluginSyntaxHighlight)
 
-const Elements = PrismicDOM.RichText.Elements
+  eleventyConfig.addFilter('simpleDate', dateObj => {
+    return DateTime.fromJSDate(dateObj, { zone: 'utc' }).toFormat('LLL dd, yyyy')
+  })
 
-const htmlSerializer = function (type, element) {
-    switch (type) {
-        case Elements.embed:
-            return `
-        <div data-oembed="${element.oembed.embed_url}"
-          data-oembed-type="${element.oembed.type}"
-          data-oembed-provider="${element.oembed.provider_name}">
-          ${element.oembed.html}
-        </div>`
-        default:
-            return null
+  eleventyConfig.addPlugin(pluginTOC, {
+    tags: ['h2'],
+    wrapper: 'div',
+    wrapperClass: ''
+  })
+
+  eleventyConfig.addPlugin(eleventyNavigationPlugin)
+
+  // Get the first `n` elements of a collection.
+  eleventyConfig.addFilter('head', (array, n) => {
+    if (n < 0) {
+      return array.slice(n)
     }
-}
+    return array.slice(0, n)
+  })
 
-module.exports = function (eleventyConfig) {
-    // Plugins
-    eleventyConfig.addPlugin(pluginRss)
-    eleventyConfig.addPlugin(pluginNavigation)
-    eleventyConfig.addPlugin(readingTime)
+  // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#valid-date-string
+  eleventyConfig.addFilter('htmlDateString', dateObj => {
+    return DateTime.fromJSDate(dateObj).toFormat('yyyy-LL-dd')
+  })
 
-    // Filters
-    Object.keys(filters).forEach((filterName) => {
-        eleventyConfig.addFilter(filterName, filters[filterName])
-    })
+  // only content in the `posts` directory
+  eleventyConfig.addCollection('posts', function(collection) {
+    return collection.getFilteredByGlob('./_site/posts/*.md').reverse()
+  })
 
-    eleventyConfig.addNunjucksFilter('prismicHtml', function (value) {
-        return PrismicDOM.RichText.asHtml(
-            value,
-            (doc) => doc.uid,
-            htmlSerializer
-        )
-    })
+  // only content in the `courses` directory
+  eleventyConfig.addCollection('courses', function(collection) {
+    return collection.getFilteredByGlob('./_site/courses/*.md').reverse()
+  })
 
-    eleventyConfig.addNunjucksFilter('prismicText', function (value) {
-        return PrismicDOM.RichText.asText(value)
-    })
+  // only content in the `projects` directory
+  eleventyConfig.addCollection('projects', function(collection) {
+    return collection.getFilteredByGlob('./_site/projects/**/*.md')
+  })
 
-    eleventyConfig.addNunjucksFilter('prismicImage', function ({ url, alt }) {
-        const altAttribute = (altText) => {
-            if (!altText) return ''
-            return `alt="${altText}"`
-        }
+  // only content in the `rayveal` directory
+  eleventyConfig.addCollection('rayveal', function(collection) {
+    return collection.getFilteredByGlob('./_site/projects/rayveal/*.md')
+  })
 
-        return `<img src="${url}" ${altAttribute(alt)} />`
-    })
+  // only content in the `seven` directory
+  eleventyConfig.addCollection('seven', function(collection) {
+    return collection.getFilteredByGlob('./_site/projects/seven/*.md')
+  })
 
-    eleventyConfig.addNunjucksFilter('prismicDate', function (dateString) {
-        return PrismicDOM.Date(dateString)
-    })
+  eleventyConfig.addCollection('searchable', function(collection) {
+    return collection
+      .getFilteredByGlob(['./_site/courses/*.md', './_site/posts/*.md', './_site/projects/**/*.md'])
+      .reverse()
+  })
 
-    eleventyConfig.addNunjucksFilter('JSONstringify', function (value) {
-        return `<pre>${JSON.stringify(value, undefined, 2)}</pre>`
-    })
+  eleventyConfig.addCollection('tagList', require('./_site/_templates/getTagList'))
 
-    eleventyConfig.addFilter('excerpt', (post) => {
-        const content = post.replace(/(<([^>]+)>)/gi, '')
-        return content.substr(0, content.lastIndexOf(' ', 200)) + '...'
-    })
+  eleventyConfig.addPassthroughCopy('./_site/images')
 
-    eleventyConfig.addFilter('postDate', (dateObj) => {
-        return DateTime.fromJSDate(dateObj).toLocaleString(DateTime.DATE_FULL)
-    })
+  /* Markdown Plugins */
+  let markdownIt = require('markdown-it')
+  let markdownItAnchor = require('markdown-it-anchor')
+  let options = {
+    html: true,
+    breaks: true,
+    linkify: true
+  }
+  let opts = {
+    permalink: true,
+    permalinkClass: 'direct-link',
+    permalinkSymbol: ' '
+  }
 
-    // Transforms
-    Object.keys(transforms).forEach((transformName) => {
-        eleventyConfig.addTransform(transformName, transforms[transformName])
-    })
+  eleventyConfig.setLibrary('md', markdownIt(options).use(markdownItAnchor, opts))
 
-    // Shortcodes
-    Object.keys(shortcodes).forEach((shortcodeName) => {
-        eleventyConfig.addShortcode(shortcodeName, shortcodes[shortcodeName])
-    })
-
-    eleventyConfig.addNunjucksAsyncShortcode('Image', async (src, alt) => {
-        if (!alt) {
-            throw new Error(`Missing \`alt\` on myImage from: ${src}`)
-        }
-
-        let stats = await Image(src, {
-            widths: [25, 320, 640, 960, 1200, 1800, 2400],
-            formats: ['jpeg', 'webp'],
-            urlPath: '/images/',
-            outputDir: './_site/images/'
-        })
-
-        let lowestSrc = stats['jpeg'][0]
-
-        const placeholder = await sharp(lowestSrc.outputPath)
-            .resize({ fit: sharp.fit.inside })
-            .blur()
-            .toBuffer()
-
-        const base64Placeholder = `data:image/png;base64,${placeholder.toString(
-            'base64'
-        )}`
-
-        const srcset = Object.keys(stats).reduce(
-            (acc, format) => ({
-                ...acc,
-                [format]: stats[format].reduce(
-                    (_acc, curr) => `${_acc} ${curr.srcset} ,`,
-                    ''
-                )
-            }),
-            {}
-        )
-
-        const source = `<source type="image/webp" data-srcset="${srcset['webp']}" >`
-
-        const img = `<img
-                        class="img-fluid lazy"
-                        alt="${alt}"
-                        src="${base64Placeholder}"
-                        data-src="${lowestSrc.url}"
-                        data-sizes='(min-width: 1024px) 1024px, 100vw'
-                        data-srcset="${srcset['jpeg']}"
-                        width="${lowestSrc.width}"
-                        height="${lowestSrc.height}">`
-        return `<div class="image-wrapper"><picture> ${source} ${img} </picture></div>`
-    })
-
-    // Icon Sprite
-    eleventyConfig.addNunjucksAsyncShortcode('iconsprite', iconsprite)
-
-    // Asset Watch Targets
-    eleventyConfig.addWatchTarget('./src/assets')
-
-    // Markdown
-    eleventyConfig.setLibrary(
-        'md',
-        markdownIt({
-            html: true,
-            breaks: true,
-            linkify: true,
-            typographer: true
-        })
-    )
-
-    // Layouts
-    eleventyConfig.addLayoutAlias('base', 'base.njk')
-    eleventyConfig.addLayoutAlias('post', 'post.njk')
-
-    // Pass-through files
-    eleventyConfig.addPassthroughCopy('src/robots.txt')
-    eleventyConfig.addPassthroughCopy('src/site.webmanifest')
-    eleventyConfig.addPassthroughCopy({ 'src/assets/favicon': '/' })
-    eleventyConfig.addPassthroughCopy({ 'src/assets/fonts': '/fonts' })
-    eleventyConfig.addPassthroughCopy({ 'src/assets/img': 'assets/img' })
-    eleventyConfig.addPassthroughCopy({ 'src/assets/css': '/assets/css' })
-    eleventyConfig.addPassthroughCopy({ 'src/assets/js': '/assets/js' })
-
-    // Deep-Merge
-    eleventyConfig.setDataDeepMerge(true)
-
-    // Base Config
-    return {
-        dir: {
-            input: 'src',
-            output: '_site',
-            includes: 'includes',
-            layouts: 'layouts',
-            data: 'data'
-        },
-        passthroughFileCopy: true,
-        templateFormats: ['njk', 'md', '11ty.js'],
-        htmlTemplateEngine: 'njk',
-        markdownTemplateEngine: 'njk'
+  return {
+    templateFormats: ['md', 'njk', 'html', 'liquid'],
+    pathPrefix: '/',
+    markdownTemplateEngine: 'liquid',
+    htmlTemplateEngine: 'njk',
+    dataTemplateEngine: 'njk',
+    setQuietMode: true,
+    passthroughFileCopy: true,
+    dir: {
+      input: '_site',
+      includes: '_templates',
+      data: '_data',
+      output: 'dist'
     }
+  }
 }
