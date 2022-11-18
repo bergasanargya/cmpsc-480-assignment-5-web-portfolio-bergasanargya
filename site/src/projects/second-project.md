@@ -6,7 +6,7 @@ date: 2019-01-01T00:00:00.000Z
 summary: This is an NPM package I made
 tags:
   - javascript
-  - node
+  - Python
 ---
 
 ### Task
