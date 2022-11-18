@@ -13,7 +13,10 @@ eleventyNavigation:
   order: 4
 ---
 
-The contact form on this page uses [Netlify Forms](https://www.netlify.com/docs/form-handling/) to process submissions,
-and saves them in the connected Netlify account where notifications can
-optionally be configured. Each submission is passed through a spam filter and
-if flagged, will display a CAPTCHA challenge to the user.
+Don't hesitate to reach out to the contacts and links listed below are available anything is needed. Though, a form provided below can be used to send messages.
+
+#### Phone Number: (814) 795-0470
+#### Email: bergaspurboyo@gmail.com
+#### [Linkedin](https://www.linkedin.com/in/bergas-anargya-24211a154/)
+#### [Handshake](https://allegheny.joinhandshake.com/stu/users/33496714)
+#### Address: 520 N Main Street Meadville, PA 16335 
