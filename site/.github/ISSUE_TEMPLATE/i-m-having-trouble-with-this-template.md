@@ -1,6 +1,6 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: I'm having trouble with this template
+about: Have a problem? It might be a bug! Create a report to help us improve.
 title: ''
 labels: ''
 assignees: ''
