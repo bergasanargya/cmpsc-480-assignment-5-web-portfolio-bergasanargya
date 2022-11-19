@@ -1,3 +1,5 @@
 # CMPSC 480: Portfolio project reflection
 
 `TODO: Follow guidelines in the README to complete
+
+During the course of this assignment, I am assigned to create a professional personal website to be shared public on my progress as a computer scientist student. I created using a template called "Fernfolio" because from the template given by `11ty`, this is the easiest to edit since I do not have any experience on Web Development. I edit this website through multiple files given by the template, where the content is mostly edited through `markdown`, the layout of the page through `json` and the colors and theme through `css`. This is a learning curve that I have to take not only creating websites but how I could present myself to the general public as it shows how big my reputation is. In addition, I do not have to worry about creating another personal website since I already have 1 and I could edit it further if I need to. 

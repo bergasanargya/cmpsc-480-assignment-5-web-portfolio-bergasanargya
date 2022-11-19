@@ -1,13 +1,13 @@
 ---
 title: Images can be added to posts
 date: 2020-02-03T08:00:00.000Z
-summary: Add a random image to your post using unsplash
+summary: Add an image to your post
 tags:
   - environment
   - politics
 ---
-Random Unsplash Image added below:
+The below image was added using Netlify CMS and is stored in your git repo.
 
-![A sample inlined image](https://source.unsplash.com/random/600x400)
+![Fern](/src/assets/img/fern-in-hand.jpeg "Fern")
 
 Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment.
