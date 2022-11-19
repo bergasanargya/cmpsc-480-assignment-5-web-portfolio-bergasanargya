@@ -1,19 +1,14 @@
 ---
-title: Cat Translation API
-emoji: 😺
+title: Restaurant Management Program
+emoji: 🍽
 metaDescription: This is a sample meta description. If one is not present in your page/project's front matter, the default metadata.desciption will be used instead.
 date: 2019-01-01T00:00:00.000Z
-summary: API to translate cat speech to english
+summary: Program to manage inventory, stock and finances of a restaurant
 tags:
-  - golang
-  - graphQL
-  - aws
+  - C++ language 
+  - MIPS
 ---
 
-### Task
+### Program Summary
 
-Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment.
-
-### Solution
-
-Bring to the table win-win survival strategies to ensure proactive domination. At the end of the day, going forward, a new normal that has evolved from generation X is on the runway heading towards a streamlined cloud solution. User generated content in real-time will have multiple touchpoints for offshoring.
+Creating a program using the C language to create a management system for restaurants to use. This programs understands the use of multidimensional arrays and structs in order to allocate different variables of one object. Has functions for determining how much of finances are being made (Profit-Loss Margin, Indirect and Direct Costs, etc.) and inventory stock (How much left after 1 dish is made?). This program will parse through a .txt file that contains an input and the user can look through the menu. 

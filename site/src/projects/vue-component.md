@@ -1,19 +1,14 @@
 ---
 title: Daily Song Recommendation Tweets 
-emoji: 🗓
+emoji: 🎤
 metaDescription: This is a sample meta description. If one is not present in your page/project's front matter, the default metadata.desciption will be used instead.
 date: 2019-01-01T00:00:00.000Z
-summary: This is a Vue component I made
+summary: Song Recommendation Tweet using Spotify API & Twitter Bot
 tags:
-  - javascript
-  - vue
-  - aws
+  - Python
+  - API
 ---
 
-### Task
+### Program Summary
 
-Leverage agile frameworks to provide a robust synopsis for high levelas overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment.
-
-### Solution
-
-Bring to the table win-win survival strategies to ensure proactive domination. At the end of the day, going forward, a new normal that has evolved from generation X is on the runway heading towards a streamlined cloud solution. User generated content in real-time will have multiple touchpoints for offshoring.
+Creating accessibility for the social media public to see what is the current daily trend on music. This is using the Spotify API to search through metadata of music and tweets it out through an message from Twitter bot. This program is coded using the Python language to easily understand what the program is doing. The tweet is sent out through analyzing how much plays are made from the music and also how popular it is in the current point in time. However, the current program could not run since the bot is inactive. 

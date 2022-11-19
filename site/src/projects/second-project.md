@@ -1,18 +1,15 @@
 ---
-title: Another NPM Package
-emoji: 💾
+title: APR Generator
+emoji: 📃
 metaDescription: This is a sample meta description. If one is not present in your page/project's front matter, the default metadata.desciption will be used instead.
 date: 2019-01-01T00:00:00.000Z
 summary: This is an NPM package I made
 tags:
-  - javascript
   - Python
+  - Gmail API
 ---
 
-### Task
+### Program Summary
 
-Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment.
+Program that send out APR (Academic Performance Report) to each individual in the class if they are performing poorly, which is 70% under their grade. This is based of the number of points on assignments and the number of attendance. This program will send out every quarter number of points. Each student's score is compared to a superuser, which is scores that have 100%. In order to extract the points and data from the Google Sheets, we use Sheetshuttle, Allegheny College student-created program that is able to have interactions with Google Sheets. To send out the email, we are going to use the Gmail API. 
 
-### Solution
-
-Bring to the table win-win survival strategies to ensure proactive domination. At the end of the day, going forward, a new normal that has evolved from generation X is on the runway heading towards a streamlined cloud solution. User generated content in real-time will have multiple touchpoints for offshoring.
